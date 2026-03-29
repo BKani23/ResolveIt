@@ -52,6 +52,17 @@ app.get("/api/issues", async (req, res) => {
   }
 });
 
+// Create a new issue
+app.post("/api/issues", async (req, res) => {
+  try {
+    const issue = await Issue.create(req.body);
+    res.status(201).json(issue);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
