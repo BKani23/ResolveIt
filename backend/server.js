@@ -1,13 +1,18 @@
-import express from 'express';
+import express from "express";
+import dotenv from "dotenv";
+import { connectToDB } from "./config/db.js";
+
+// load .env variables
+dotenv.config();
+
+connectToDB();
 
 const app = express();
 
-app.get("/",(req,res)=>{
+app.get("/", (req, res) => {
+  res.send("ResolveIt API is running...");
+});
 
-     res.send("Server running on PORT 3000 !")
+const PORT = process.env.PORT || 5000;
 
-})
-
-app.listen(3000,()=>{
-     console.log("Server listening on PORT 3000 !");
-})
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
