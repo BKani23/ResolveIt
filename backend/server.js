@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 import { connectToDB } from "./config/db.js";
 import mongoose from "mongoose";
 
-
 // load .env variables
 dotenv.config();
 
@@ -13,6 +12,9 @@ connectToDB();
 // Initialize Express app
 const app = express();
 
+
+// to parse JSON bodies
+app.use(express.json()); 
 
 const issueSchema = new mongoose.Schema(
   {
@@ -34,10 +36,10 @@ const issueSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Issue = mongoose.model("Issue", issueSchema);
+const Issue = mongoose.model("Issue", issueSchema, "Issues");
 
 app.get("/", (req, res) => {
-  res.send("ResolveIt API is running...");
+  res.status(200).json({ message: "ResolveIT Main Route" });
 });
 
 
