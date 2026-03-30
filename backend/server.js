@@ -53,7 +53,30 @@ app.get("/", (req, res) => {
   res.status(200).json({ message: "ResolveIT Main Route" });
 });
 
+// Get a specific issue by ID
+app.get("/api/issues/:id", async (req, res) => {
 
+  const { id } = req.params;
+
+  // Validate MongoDB ObjectId
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: "Invalid issue ID" });
+  }
+
+  try {
+    
+    const issue = await Issue.findById(id);
+
+    if (!issue) {
+      return res.status(404).json({ message: "Issue not found" });
+    }
+
+    res.json(issue);
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 // Get all issues
 app.get("/api/issues", async (req, res) => {
@@ -103,9 +126,10 @@ app.put("/api/issues/:id/status", async (req, res) => {
   } catch (error) {
 
     res.status(500).json({ message: error.message });
-    
+
   }
 });
+
 
 // Delete an issue
 app.delete("/api/issues/:id", async (req, res) => {
