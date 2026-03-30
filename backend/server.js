@@ -38,6 +38,17 @@ const issueSchema = new mongoose.Schema(
 
 const Issue = mongoose.model("Issue", issueSchema, "Issues");
 
+// Create a new issue
+app.post("/api/issues", async (req, res) => {
+  try {
+    const issue = await Issue.create(req.body);
+    res.status(201).json(issue);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+//Root route 
 app.get("/", (req, res) => {
   res.status(200).json({ message: "ResolveIT Main Route" });
 });
@@ -54,11 +65,19 @@ app.get("/api/issues", async (req, res) => {
   }
 });
 
-// Create a new issue
-app.post("/api/issues", async (req, res) => {
+// Delete an issue
+app.delete("/api/issues/:id", async (req, res) => {
+
   try {
-    const issue = await Issue.create(req.body);
-    res.status(201).json(issue);
+
+    const issue = await Issue.findByIdAndDelete(req.params.id);
+    
+    if (!issue) {
+      return res.status(404).json({ message: "Issue not found" });
+    }
+
+    res.json({ message: "Issue deleted successfully" });
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
