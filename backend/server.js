@@ -68,10 +68,16 @@ app.get("/api/issues", async (req, res) => {
 // Delete an issue
 app.delete("/api/issues/:id", async (req, res) => {
 
-  try {
+  const { id } = req.params;
 
-    const issue = await Issue.findByIdAndDelete(req.params.id);
-    
+  // Check if ID is valid
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: "Invalid issue ID" });
+  }
+
+  try {
+    const issue = await Issue.findByIdAndDelete(id);
+
     if (!issue) {
       return res.status(404).json({ message: "Issue not found" });
     }
