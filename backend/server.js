@@ -65,6 +65,48 @@ app.get("/api/issues", async (req, res) => {
   }
 });
 
+
+// Update issue status
+
+app.put("/api/issues/:id/status", async (req, res) => {
+
+  const { id } = req.params;
+  const { status } = req.body;
+
+  // Validate MongoDB ObjectId
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: "Invalid issue ID" });
+  }
+
+  // Validate status value
+  const allowedStatuses = ["pending", "in-progress", "resolved"];
+
+  if (!allowedStatuses.includes(status)) {
+    return res
+      .status(400)
+      .json({ message: `Status must be one of: ${allowedStatuses.join(", ")}` });
+  }
+
+  try {
+
+    const issue = await Issue.findById(id);
+
+    if (!issue) {
+      return res.status(404).json({ message: "Issue not found" });
+    }
+
+    issue.status = status;
+    await issue.save();
+
+    res.json({ message: "Issue status updated successfully", issue });
+
+  } catch (error) {
+
+    res.status(500).json({ message: error.message });
+    
+  }
+});
+
 // Delete an issue
 app.delete("/api/issues/:id", async (req, res) => {
 
